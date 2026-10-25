@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Calorie Tracker
 
-## Getting Started
+A simple, phone-first calorie tracker for two people. Each person taps their name and enters a 4-digit PIN.
 
-First, run the development server:
+- Log a meal description and its calories, or look up a food on [Open Food Facts](https://world.openfoodfacts.org) and enter the grams.
+- Dashboard: today's total against your goal, calories left, a 7-day chart and your logging streak.
+- Optional shared panel showing both people's totals for today (totals only, never the food list).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Built with Next.js, Tailwind CSS and Postgres (Neon on Vercel).
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Sign in at [vercel.com](https://vercel.com) with GitHub, click **Add New → Project** and import this repo. Leave the defaults.
+2. Before (or after) the first deploy, open the project's **Storage** tab, add **Neon** (free) and connect it to the project. This sets `DATABASE_URL` for you.
+3. In **Settings → Environment Variables**, add `SESSION_SECRET`: any random string of 32 or more characters. Optionally add `APP_TIMEZONE` (default `Africa/Johannesburg`).
+4. Redeploy (**Deployments → ⋯ → Redeploy**) so the new variables are picked up.
+5. Open the site and tap **Set up the two users**. Each person adds their name and PIN. Setup closes once two users exist.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tables are created automatically on first use, so there is no database step.
+
+## Day-to-day
+
+- **Forgot a PIN?** Open the Neon console (Vercel → Storage → Neon → Open in Neon), go to the SQL editor and run `DELETE FROM users WHERE name = 'Their Name';`. This deletes their entries too. Then use **Set up** on the login screen again. To keep entries, change the PIN in the app instead (**Me → Change PIN**).
+- **Locked out?** Five wrong PINs lock that person out for 15 minutes.
+
+## Run locally
+
+```bash
+npm install
+cp .env.example .env.local   # then fill in SESSION_SECRET
+npm run db:local             # local Postgres stand-in on port 5433 (keep running)
+npm run dev
+```
+
+With the local database, set `DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5433/postgres?sslmode=disable` in `.env.local`.
